@@ -2792,11 +2792,7 @@ async function processBarcode(code){
  showLoad('Fetching product info...');
  if(!GROQ_KEY){hideLoad();showFoodResult({productName:'Organic Basmati Rice',brand:'Fortune',mfgDate:'2025-08-01',expiryDate:'2026-08-15',batchNo:'BT240312',daysUntilExpiry:519});return;}
  try{
-  const res=await fetch(API_BASE+'/chat',{method:'POST',headers:{'Authorization':'Bearer '+GROQ_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:250,messages:[{role:'user',content:`Barcode: ${ code }. Return ONLY JSON: { "productName": "...", "brand": "...", "mfgDate": "YYYY-MM-DD", "expiryDate": "YYYY-MM-DD", "batchNo": "...", "daysUntilExpiry": 100 } `}]})});
-  const data=await res.json();const txt=data.choices?.[0]?.message?.content||'';
-  const m=txt.match(/\{[\s\S]*\}/);hideLoad();
-  if(m)showFoodResult(JSON.parse(m[0]));
-  else showFoodResult({productName:'Product #'+code,brand:'Unknown',expiryDate:'2026-06-01',batchNo:code,daysUntilExpiry:Math.floor((new Date('2026-06-01')-new Date())/86400000)});
+  const result=await apiPost('/food-label',{barcodeText:code});hideLoad();showFoodResult(result);
  }catch(e){hideLoad();showFoodResult({productName:'Scanned Item',brand:'',expiryDate:'2026-06-01',batchNo:'DEMO',daysUntilExpiry:90});}
 }
 function handleFoodFile(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>analyzeFoodLabel(e.target.result);r.readAsDataURL(f);}
