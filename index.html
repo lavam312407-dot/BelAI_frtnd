@@ -3,6 +3,15 @@
 
 <head>
   <meta charset="UTF-8">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#22c55e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BELAI">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   <title>BELAI — ಬೆಳೆ AI | Karnataka Farming Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3038,6 +3047,24 @@ function openBkModal(id){
       }
     </script>
   </div>
+
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => {
+              console.log('[BELAI] SW registered:', reg.scope);
+              // Ask for notification permission
+              if ('Notification' in window && Notification.permission === 'default') {
+                setTimeout(() => Notification.requestPermission(), 5000);
+              }
+            })
+            .catch(err => console.log('[BELAI] SW failed:', err));
+        });
+      }
+    </script>
+
 </body>
 
 </html>
