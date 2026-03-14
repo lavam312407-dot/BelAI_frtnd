@@ -654,7 +654,83 @@
         transform: translateY(-5px)
       }
     }
-  </style>
+  
+/* ── PROFILE SCREEN ─────────────────────────────────────── */
+.profile-screen { padding: 0; background: none; }
+.profile-hero {
+  position: relative;
+  padding: 48px 24px 80px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.profile-avatar-wrap {
+  position: relative; display: inline-block; margin-bottom: 14px;
+}
+.profile-avatar {
+  width: 100px; height: 100px; border-radius: 50%;
+  border: 3px solid var(--gold); object-fit: cover; display: block;
+  background: rgba(255,255,255,0.15);
+}
+.profile-avatar-edit {
+  position: absolute; bottom: 2px; right: 2px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--gold); color: #000; border: none;
+  font-size: 14px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+}
+.profile-name { font-size: 22px; font-weight: 700; color: var(--white); margin: 0 0 4px; }
+.profile-meta { font-size: 13px; color: rgba(255,255,255,0.7); display: flex; 
+  align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px; }
+.profile-bio { font-size: 13px; color: rgba(255,255,255,0.75); max-width: 300px;
+  margin: 0 auto 16px; line-height: 1.5; }
+.google-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #fff; border: 1px solid #dadce0; border-radius: 22px;
+  padding: 10px 20px; font-size: 14px; font-weight: 600;
+  color: #3c4043; cursor: pointer; transition: box-shadow 0.2s;
+  text-decoration: none; margin-top: 6px;
+}
+.google-btn:hover { box-shadow: 0 2px 14px rgba(0,0,0,0.35); }
+.google-connected-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.5);
+  border-radius: 20px; padding: 6px 14px; font-size: 13px;
+  color: #4ade80; margin-top: 6px;
+}
+.profile-back {
+  position: absolute; top: 16px; left: 16px;
+}
+.profile-edit-btn {
+  position: absolute; top: 16px; right: 16px;
+}
+/* editing form */
+.profile-form .glass-input { margin-bottom: 12px; }
+/* queries */
+.query-tabs { display: flex; gap: 0; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--glass-border); margin-bottom: 16px; }
+.query-tab { flex: 1; padding: 10px; text-align: center; font-size: 13px;
+  font-weight: 600; cursor: pointer; color: rgba(255,255,255,0.6);
+  background: transparent; border: none; transition: all 0.2s; }
+.query-tab.active { background: var(--gold); color: #000; }
+.query-card {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 16px; margin-bottom: 12px;
+}
+.query-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.query-user-avatar {
+  width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
+  background: rgba(255,255,255,0.2);
+}
+.query-title { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+.query-desc { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.4; margin-bottom: 10px; }
+.query-meta { font-size: 12px; color: rgba(255,255,255,0.5); display: flex; gap: 12px; }
+.reply-box { background: rgba(0,0,0,0.25); border-radius: 12px; padding: 12px; margin-top: 10px; }
+.reply-box textarea { width: 100%; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px;
+  color: #fff; font-size: 13px; resize: none; outline: none; font-family: 'Inter', sans-serif; }
+
+</style>
 </head>
 
 <body>
@@ -707,7 +783,88 @@
   <!-- ══════════════════════════════════════════════
   SCREEN 1 — LANGUAGE SELECTION
 ══════════════════════════════════════════════ -->
-  <div id="splash" class="screen">
+  
+<!-- ══════════════════════════════════════════════
+  SCREEN: USER PROFILE
+══════════════════════════════════════════════ -->
+<div id="mod-profile" class="screen" style="overflow-y:auto;padding-bottom:80px">
+
+  <!-- Hero / Header -->
+  <div class="profile-hero" id="profileHero">
+    <button class="btn-outline back-btn profile-back" onclick="goHome()" style="padding:0;width:40px;height:40px;font-size:18px">←</button>
+    <button class="btn-outline profile-edit-btn" id="profileEditBtn" onclick="toggleProfileEdit()">✏️ Edit</button>
+
+    <div class="profile-avatar-wrap">
+      <img id="profileAvatar" class="profile-avatar"
+           src="https://api.dicebear.com/7.x/initials/svg?seed=BELAI&backgroundColor=2d6a4f" alt="Avatar" />
+      <button class="profile-avatar-edit" onclick="document.getElementById('avatarInput').click()">📷</button>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+    </div>
+    <div class="profile-name" id="profileDisplayName">Loading...</div>
+    <div class="profile-meta" id="profileDisplayMeta">
+      <span>📍</span><span id="profileDisplayVillage">—</span>
+      <span>|</span>
+      <span>📞</span><span id="profileDisplayPhone">—</span>
+    </div>
+    <div class="profile-bio" id="profileDisplayBio">Tap Edit to add a short bio.</div>
+
+    <!-- Google Auth -->
+    <div id="googleSection">
+      <button class="google-btn" onclick="linkGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.566 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H1.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H1.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l2.007-1.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 1.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        Continue with Google
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Form (hidden by default) -->
+  <div id="profileEditForm" style="display:none;padding:20px" class="profile-form">
+    <div class="glass" style="padding:20px">
+      <div style="font-size:16px;font-weight:700;color:var(--gold);margin-bottom:16px">✏️ Edit Profile</div>
+      <input class="glass-input" id="editName"    placeholder="Full Name">
+      <input class="glass-input" id="editVillage" placeholder="Village / Town Name">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div class="glass-input" style="width:70px;padding:12px;text-align:center;flex-shrink:0">+91</div>
+        <input class="glass-input" id="editPhone" placeholder="Phone Number" style="flex:1;margin:0" type="tel">
+      </div>
+      <textarea id="editBio" class="glass-input" rows="3" maxlength="150"
+        placeholder="Short bio (max 150 chars)" style="resize:none;font-family:inherit"></textarea>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:16px;text-align:right" id="bioCharCount">0/150</div>
+      <button class="btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+      <button class="btn-outline" style="margin-top:8px" onclick="toggleProfileEdit()">✕ Cancel</button>
+    </div>
+  </div>
+
+  <!-- Queries Section -->
+  <div style="padding:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:18px;font-weight:700;color:var(--gold)">💬 Queries & Interactions</div>
+      <button class="btn-primary" style="padding:8px 14px;font-size:12px" onclick="openNewQueryModal()">+ Post Query</button>
+    </div>
+
+    <!-- Tab Switcher -->
+    <div class="query-tabs">
+      <button class="query-tab active" id="tab-received" onclick="switchQueryTab('received')">Received Queries</button>
+      <button class="query-tab" id="tab-mine" onclick="switchQueryTab('mine')">My Queries</button>
+    </div>
+
+    <!-- Queries List -->
+    <div id="queriesList"></div>
+  </div>
+
+  <!-- New Query Modal -->
+  <div id="newQueryModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px">
+    <div class="glass" style="width:100%;max-width:420px;padding:24px">
+      <div style="font-size:17px;font-weight:700;color:var(--gold);margin-bottom:16px">📢 Post a Query</div>
+      <input class="glass-input" id="queryTitle" placeholder="Query Title (e.g. Best pesticide for aphids?)" style="margin-bottom:12px">
+      <textarea id="queryDesc" class="glass-input" rows="3" placeholder="Describe your query in detail..." style="resize:none;font-family:inherit;margin-bottom:16px"></textarea>
+      <button class="btn-primary" onclick="submitQuery()">Post Query 🌱</button>
+      <button class="btn-outline" style="margin-top:8px" onclick="closeNewQueryModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="splash" class="screen">
     <div class="screen-content"
       style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center">
       <div style="margin-bottom:8px;font-size:48px">🌾</div>
@@ -1254,6 +1411,7 @@
   <script>
     // ── SCREEN BACKGROUNDS ─────────────────────────────
     const BG = {
+  'mod-profile': 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=80&fit=crop',
       'mod-auth': 'https://images.unsplash.com/photo-1586771107445-d3ca888129ff?w=1920&q=80&fit=crop',
       splash: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1920&q=80&fit=crop',
       modsel: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80&fit=crop',
@@ -1292,7 +1450,7 @@
         const data = await res.json(); hideLoad();
         if (data.error) return showToast(data.error);
         localStorage.setItem('belai_user', JSON.stringify(data.user));
-        showToast('Login successful!'); showScreen('splash');
+        showToast('Login successful!'); showScreen('mod-profile'); initProfile();
       } catch (e) { hideLoad(); showToast('Login failed'); }
     }
     async function doRegister() {
@@ -1305,7 +1463,7 @@
         const data = await res.json(); hideLoad();
         if (data.error) return showToast(data.error);
         localStorage.setItem('belai_user', JSON.stringify(data.user));
-        showToast('Registration successful!'); showScreen('splash');
+        showToast('Registration successful!'); showScreen('mod-profile'); initProfile();
       } catch (e) { hideLoad(); showToast('Registration failed'); }
     }
     function logout() { localStorage.removeItem('belai_user'); showScreen('mod-auth'); }
@@ -1754,7 +1912,219 @@
     }
     function submitEqListing() { const n = document.getElementById('eqName')?.value.trim(), p = document.getElementById('eqPrice')?.value; if (!n || !p) { showToast('Fill name and price'); return; } showToast('Equipment listed ✓'); document.getElementById('eqName').value = ''; document.getElementById('eqPrice').value = ''; }
 
-    // ── INIT ──────────────────────────────────────────────
+    
+// ── PROFILE ─────────────────────────────────────────────────────
+
+let QUERY_TAB = 'received';
+let QUERIES_DB = JSON.parse(localStorage.getItem('belai_queries')||'[]');
+
+function initProfile() {
+  const raw = localStorage.getItem('belai_user');
+  if (!raw) return;
+  const u = JSON.parse(raw);
+  const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+
+  // Set display fields
+  document.getElementById('profileDisplayName').textContent  = profile.name  || u.name || 'Farmer';
+  document.getElementById('profileDisplayVillage').textContent = profile.village || '—';
+  document.getElementById('profileDisplayPhone').textContent  = profile.phone || u.phone || '—';
+  document.getElementById('profileDisplayBio').textContent   = profile.bio   || 'Tap Edit to add a short bio.';
+
+  // Avatar
+  if (profile.avatar) {
+    document.getElementById('profileAvatar').src = profile.avatar;
+  } else {
+    const initials = (u.name||'U').slice(0,2).toUpperCase();
+    document.getElementById('profileAvatar').src = 
+      'https://api.dicebear.com/7.x/initials/svg?seed='+encodeURIComponent(initials)+'&backgroundColor=2d6a4f';
+  }
+
+  // Google badge vs connect button
+  const gSection = document.getElementById('googleSection');
+  if (profile.googleLinked) {
+    gSection.innerHTML = '<div class="google-connected-badge"><svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.566 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H1.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H1.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l2.007-1.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 1.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>✅ Google Connected <span style="color:rgba(255,255,255,0.5);font-size:11px;margin-left:4px">('+profile.googleEmail+')</span></div>';
+  }
+
+  // Render queries
+  switchQueryTab(QUERY_TAB);
+}
+
+function toggleProfileEdit() {
+  const form = document.getElementById('profileEditForm');
+  const visible = form.style.display !== 'none';
+  if (!visible) {
+    // Pre-fill with current values
+    const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+    const user    = JSON.parse(localStorage.getItem('belai_user')||'{}');
+    document.getElementById('editName').value    = profile.name    || user.name    || '';
+    document.getElementById('editVillage').value = profile.village || '';
+    document.getElementById('editPhone').value   = profile.phone   || user.phone   || '';
+    document.getElementById('editBio').value     = profile.bio     || '';
+    updateBioCount();
+  }
+  form.style.display = visible ? 'none' : '';
+  document.getElementById('profileEditBtn').textContent = visible ? '✏️ Edit' : '✕ Close';
+}
+
+function updateBioCount() {
+  const v = (document.getElementById('editBio')||{}).value||'';
+  const el = document.getElementById('bioCharCount');
+  if (el) el.textContent = v.length+'/150';
+}
+
+function saveProfile() {
+  const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+  profile.name    = document.getElementById('editName').value.trim();
+  profile.village = document.getElementById('editVillage').value.trim();
+  profile.phone   = document.getElementById('editPhone').value.trim();
+  profile.bio     = document.getElementById('editBio').value.trim();
+
+  localStorage.setItem('belai_profile', JSON.stringify(profile));
+  toggleProfileEdit();
+  initProfile();
+  showToast('Profile updated ✓');
+}
+
+function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+    profile.avatar = e.target.result;
+    localStorage.setItem('belai_profile', JSON.stringify(profile));
+    document.getElementById('profileAvatar').src = e.target.result;
+    showToast('Photo updated ✓');
+  };
+  reader.readAsDataURL(file);
+}
+
+function linkGoogle() {
+  // Simulate OAuth link (real Google OAuth needs server-side client ID)
+  const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+  profile.googleLinked = true;
+  profile.googleEmail  = (JSON.parse(localStorage.getItem('belai_user')||'{}')).email || 'user@gmail.com';
+  localStorage.setItem('belai_profile', JSON.stringify(profile));
+  initProfile();
+  showToast('Google account linked ✓');
+}
+
+// ── QUERIES ─────────────────────────────────────────────────
+function switchQueryTab(tab) {
+  QUERY_TAB = tab;
+  ['received','mine'].forEach(t => {
+    document.getElementById('tab-'+t)?.classList.toggle('active', t===tab);
+  });
+  renderQueries();
+}
+
+function renderQueries() {
+  const list = document.getElementById('queriesList');
+  if (!list) return;
+  const userId = (JSON.parse(localStorage.getItem('belai_user')||'{}')).id||'me';
+  const data = tab => QUERIES_DB.filter(q => tab==='mine' ? q.authorId===userId : q.authorId!==userId);
+  const queries = data(QUERY_TAB);
+
+  if (!queries.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">'+(QUERY_TAB==='mine'?'You haven't posted any queries yet.':'No queries from others yet.')+'</div>';
+    return;
+  }
+
+  list.innerHTML = queries.map((q, i) => `
+    <div class="query-card">
+      <div class="query-card-head">
+        <img class="query-user-avatar"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(q.authorName||'U')}&backgroundColor=2d6a4f"
+          alt="avatar">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--white)">${q.authorName||'Farmer'}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5)">📍 ${q.village||'Unknown'}</div>
+        </div>
+        <div style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.4)">${timeAgo(q.time)}</div>
+      </div>
+      <div class="query-title">${q.title}</div>
+      <div class="query-desc">${q.desc}</div>
+      <div class="query-meta">
+        <span>💬 ${(q.replies||[]).length} replies</span>
+      </div>
+      <div id="replyBox-${i}" style="display:none" class="reply-box">
+        <textarea rows="2" placeholder="Type your reply..." id="replyText-${i}"></textarea>
+        <button class="btn-primary" style="margin-top:8px;padding:8px 16px;font-size:13px"
+          onclick="submitReply(${i})">Send Reply →</button>
+      </div>
+      ${QUERY_TAB==='received' ? `
+        <button class="btn-outline" style="margin-top:10px;font-size:12px;padding:6px 14px"
+          onclick="toggleReplyBox(${i})">💬 Reply / Interact</button>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+function toggleReplyBox(i) {
+  const box = document.getElementById('replyBox-'+i);
+  if (box) box.style.display = box.style.display==='none' ? '' : 'none';
+}
+
+function submitReply(i) {
+  const userId = (JSON.parse(localStorage.getItem('belai_user')||'{}')).id||'me';
+  const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+  const text = (document.getElementById('replyText-'+i)||{}).value?.trim();
+  if (!text) return showToast('Please type a reply first');
+  const queries = QUERIES_DB.filter(q=>q.authorId!==userId);
+  const q = queries[i];
+  if (!q) return;
+  const qIdx = QUERIES_DB.indexOf(q);
+  if (!QUERIES_DB[qIdx].replies) QUERIES_DB[qIdx].replies = [];
+  QUERIES_DB[qIdx].replies.push({ from: profile.name||'You', text, time: Date.now() });
+  localStorage.setItem('belai_queries', JSON.stringify(QUERIES_DB));
+  renderQueries();
+  showToast('Reply sent ✓');
+}
+
+function openNewQueryModal() {
+  const m = document.getElementById('newQueryModal');
+  if (m) { m.style.display = 'flex'; }
+}
+
+function closeNewQueryModal() {
+  const m = document.getElementById('newQueryModal');
+  if (m) m.style.display = 'none';
+}
+
+function submitQuery() {
+  const title = document.getElementById('queryTitle')?.value?.trim();
+  const desc  = document.getElementById('queryDesc')?.value?.trim();
+  if (!title||!desc) return showToast('Fill in both fields');
+  const user    = JSON.parse(localStorage.getItem('belai_user')||'{}');
+  const profile = JSON.parse(localStorage.getItem('belai_profile')||'{}');
+  const newQ = {
+    title, desc,
+    authorId:   user.id  ||'me',
+    authorName: profile.name||user.name||'Farmer',
+    village:    profile.village||'—',
+    time:       Date.now(),
+    replies:    [],
+  };
+  QUERIES_DB.push(newQ);
+  localStorage.setItem('belai_queries', JSON.stringify(QUERIES_DB));
+  document.getElementById('queryTitle').value = '';
+  document.getElementById('queryDesc').value  = '';
+  closeNewQueryModal();
+  switchQueryTab('mine');
+  showToast('Query posted ✓');
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff/60000);
+  if (m < 1)  return 'just now';
+  if (m < 60) return m+' min ago';
+  if (m < 1440) return Math.floor(m/60)+' hr ago';
+  return Math.floor(m/1440)+' days ago';
+}
+
+
+// ── INIT ──────────────────────────────────────────────
     window.addEventListener('load', () => {
 
       const user = localStorage.getItem('belai_user');
