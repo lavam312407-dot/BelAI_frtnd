@@ -1626,7 +1626,7 @@
         const data = await res.json(); hideLoad();
         if (data.error) return showToast('❌ ' + data.error + ' — try Forgot Password?');
         localStorage.setItem('belai_user', JSON.stringify(data.user));
-        showToast('✅ Login successful!'); showScreen('modsel'); buildModGrid();
+        showToast('✅ Login successful!'); showScreen('splash');
       } catch (e) { hideLoad(); showToast('Login failed — check your connection'); }
     }
     async function doResetPassword() {
@@ -1654,7 +1654,7 @@
         const data = await res.json(); hideLoad();
         if (data.error) return showToast(data.error);
         localStorage.setItem('belai_user', JSON.stringify(data.user));
-        showToast('Registration successful!'); showScreen('mod-profile'); initProfile();
+        showToast('✅ Registration successful!'); showScreen('splash');
       } catch (e) { hideLoad(); showToast('Registration failed'); }
     }
     function logout() { localStorage.removeItem('belai_user'); showScreen('mod-auth'); }
